@@ -6,6 +6,10 @@ import { useMutation } from "@tanstack/react-query";
 import { Calendar as CalendarIcon, Check } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+
+import axios from 'axios';
+
+
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -64,7 +68,7 @@ export default function BookingForm() {
       name: "",
       email: "",
       phone: "",
-      guests: "2",
+      guests: 2,
       message: "",
     },
   });

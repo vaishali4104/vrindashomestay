@@ -1,45 +1,20 @@
-import type { Express } from "express";
-import { createServer, type Server } from "http";
-import { storage } from "./storage";
-import { insertBookingInquirySchema } from "@shared/schema";
-import { z } from "zod";
-import { fromZodError } from "zod-validation-error";
+import { sendBookingEmail } from './emailService'; 
+import * as nodemailer from "nodemailer";
+import * as dotenv from "dotenv";
+import * as express from "express";
+import * as cors from "cors";
 
-export async function registerRoutes(app: Express): Promise<Server> {
-  // API endpoint for booking inquiries
-  app.post("/api/bookings/inquire", async (req, res) => {
-    try {
-      // Validate the request body
-      const validatedData = insertBookingInquirySchema.parse(req.body);
-      
-      // Store the booking inquiry
-      const bookingInquiry = await storage.createBookingInquiry(validatedData);
-      
-      // Return success response
-      return res.status(200).json({
-        success: true,
-        message: "Booking inquiry received successfully",
-        data: bookingInquiry
-      });
-    } catch (error) {
-      // Handle validation errors
-      if (error instanceof z.ZodError) {
-        const validationError = fromZodError(error);
-        return res.status(400).json({
-          success: false,
-          message: "Validation error",
-          errors: validationError.details
-        });
-      }
-      
-      // Handle other errors
-      return res.status(500).json({
-        success: false,
-        message: "Failed to process booking inquiry"
-      });
-    }
-  });
+const router = express.Router();
 
-  const httpServer = createServer(app);
-  return httpServer;
-}
+router.post('/api/booking', async (req, res) => {
+  try {
+    const bookingData = req.body;
+    await sendBookingEmail(bookingData);
+    res.status(200).json({ message: 'Email sent successfully' });
+  } catch (error: any) {
+    console.error('Email send error:', error);
+    res.status(500).json({ message: 'Failed to send email', error: error.message });
+  }
+});
+
+export default router;
