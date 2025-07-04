@@ -12,7 +12,7 @@
     "db:push": "drizzle-kit push",
     "start-server": "ts-node --esm server/server.ts",
   "build": "vite build && npm run build:server",
-  "build:server": "esbuild server/server.ts --platform=node --packages=external --bundle --format=cjs --outdir=dist",
+  "build:server": "esbuild server/server.ts --platform=node --packages=external --bundle --format=cjs --outdir=dist"
   },
 
   "dependencies": {
